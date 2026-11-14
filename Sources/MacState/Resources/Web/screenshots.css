@@ -1,0 +1,31 @@
+#screenshot{min-width:0}
+.shot-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.shot-toolbar select,.shot-settings-grid input,.shot-settings-grid select,#shot-delay,.shot-shortcuts input{background:var(--card);color:var(--text);border:0.5px solid var(--border);border-radius:9px;padding:8px 10px;font:inherit;font-size:12px;min-width:0}
+#shot-settings-toggle{margin-left:auto}
+#shot-status{font-size:12px;min-height:18px}
+#shot-permission{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.shot-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:16px 0}
+.shot-settings-grid>label{display:flex;flex-direction:column;gap:7px;font-size:12px}
+.shot-prefix-field{grid-column:1/-1}
+#shot-delay{width:88px}
+.shot-directory{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:12px}
+.shot-directory>div{flex:1;min-width:140px}
+#shot-directory{display:block;overflow-wrap:anywhere;margin-top:7px}
+.shot-shortcuts{display:grid}
+.shot-shortcuts>label{display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,180px) auto;align-items:center;gap:12px;font-size:12px;padding:12px 0;border-bottom:0.5px solid var(--border)}
+.shot-shortcuts input{width:100%;cursor:pointer}
+#shot-settings-feedback{font-size:12px;margin:0 0 16px}
+#shot-settings-feedback:empty{margin:0}
+#shot-shortcut-error{color:#ff7b72;font-size:12px}
+.shot-history{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;padding-bottom:20px}
+.shot-history-card{padding:12px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.shot-thumbnail{height:140px;width:100%;border:0;border-radius:9px;padding:5px;background:rgba(128,128,128,.08);display:grid;place-items:center;overflow:hidden;cursor:pointer}
+.shot-thumbnail img{max-height:130px;max-width:100%;object-fit:contain}
+.shot-history-card>strong{font-size:12px}
+.shot-history-card>small{font-size:12px}
+.shot-card-actions{display:flex;align-items:center;gap:8px;margin-top:1px}
+.shot-card-actions>.button.shot-card-action{display:flex;flex:0 0 32px;align-items:center;justify-content:center;width:32px;height:24px;min-height:24px;padding:0}
+.shot-card-action .glyph{width:14px;height:14px;flex:0 0 14px;pointer-events:none}
+.shot-card-action[data-shot-edit]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.shot-card-action[data-shot-edit]:not(:disabled):hover{background:color-mix(in srgb,var(--accent) 28%,transparent);border-color:var(--accent)}
+@media(max-width:800px){.shot-history{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}

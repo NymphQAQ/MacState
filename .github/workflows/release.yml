@@ -1,0 +1,60 @@
+name: Publish macOS release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: xcode-27
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+
+      - name: Build and package Apple Silicon app
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' scripts/Info.plist)"
+          if [[ "${RELEASE_TAG}" != "v${version}" ]]; then
+            printf 'Expected tag v%s, got %s\n' "${version}" "${RELEASE_TAG}" >&2
+            exit 1
+          fi
+
+          bash scripts/build-app.sh --ad-hoc
+          [[ "$(lipo -archs dist/MacState.app/Contents/MacOS/MacState)" == arm64 ]]
+
+          cd dist
+          archive="MacState-${RELEASE_TAG}-macOS-arm64.zip"
+          ditto -c -k --sequesterRsrc --keepParent MacState.app "${archive}"
+          unzip -tq "${archive}"
+          shasum -a 256 "${archive}" > "${archive}.sha256"
+
+      - name: Publish ZIP and checksum
+        shell: bash
+        working-directory: dist
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          cat > release-notes.md << 'EOF'
+          MacState 是 macOS 菜单栏系统监控应用。
+
+          - 在「监控」中查看进程、传感器和网络。
+          - 磁盘分析支持左侧功能导航、最近空间增长图表，以及暂停、恢复和手动同步索引。
+          - 设置按功能分组，截屏选项可在设置页调整。
+
+          下载 `macOS-arm64.zip` 文件，解压后将 `MacState.app` 拖到「应用程序」。此版本适用于 Apple Silicon，使用临时签名（ad-hoc），未经 Apple 公证。macOS 首次打开时可能拦截。ZIP 旁附有 SHA-256 校验文件。
+          EOF
+
+          archive="MacState-${RELEASE_TAG}-macOS-arm64.zip"
+          gh release create "${RELEASE_TAG}" "${archive}" "${archive}.sha256" \
+            --verify-tag --title "MacState ${RELEASE_TAG}" --notes-file release-notes.md

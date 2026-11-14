@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>MacState 系统监控</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="icons.css">
+  <link rel="stylesheet" href="overview.css">
+  <link rel="stylesheet" href="liquid-glass.css">
+  <link rel="stylesheet" href="usage.css">
+  <link rel="stylesheet" href="disk-analysis.css">
+  <link rel="stylesheet" href="disk-space-map.css">
+  <link rel="stylesheet" href="disk-storage-files.css">
+  <link rel="stylesheet" href="disk-storage-insights.css">
+  <link rel="stylesheet" href="disk-workbench.css">
+  <link rel="stylesheet" href="disk-file-interactions.css">
+  <link rel="stylesheet" href="component-glass.css">
+  <link rel="stylesheet" href="compact.css">
+  <script src="overview.js" defer></script>
+  <script src="usage-processes.js" defer></script>
+  <script src="usage.js" defer></script>
+  <script src="disk-analysis.js" defer></script>
+  <script src="disk-space-map.js" defer></script>
+  <script src="disk-storage-files.js" defer></script>
+  <script src="disk-storage-insights.js" defer></script>
+  <script src="disk-workbench.js" defer></script>
+  <script src="disk-file-interactions.js" defer></script>
+  <script src="component-glass.js" defer></script>
+  <script src="navigation-history.js" defer></script>
+  <script src="screenshots.js" defer></script>
+  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="screenshots.css">
+  <link rel="stylesheet" href="desktop-design.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand" title="MacState"><span class="brand-icon">M</span><span class="brand-name">MacState</span></div>
+    <div class="nav-label">本机</div>
+    <nav aria-label="主要导航">
+      <button data-view="overview" class="nav active" aria-current="page" title="总览"><span class="glyph i-layout-dashboard"></span><span class="nav-text">总览</span></button>
+      <button data-view="processes" class="nav" title="监控"><span class="glyph i-list"></span><span class="nav-text">监控</span><span id="process-badge" class="badge">—</span></button>
+      <button data-view="storage" class="nav" title="存储卷"><span class="glyph i-hard-drive"></span><span class="nav-text">存储</span></button>
+      <button data-view="usage" class="nav" title="电池与应用使用记录"><span class="glyph i-battery"></span><span class="nav-text">使用记录</span></button>
+      <button data-view="screenshot" class="nav" title="截屏"><span class="glyph i-monitor"></span><span class="nav-text">截屏</span></button>
+      <button data-view="misc" class="nav" title="快捷工具"><span class="glyph i-zap"></span><span class="nav-text">快捷工具</span></button>
+    </nav>
+    <div class="sidebar-bottom">
+      <button data-view="settings" class="nav" title="设置"><span class="glyph i-settings"></span><span class="nav-text">设置</span></button>
+      <div class="device-mini"><span class="live-dot"></span><div id="device-mini">正在连接本机<small>本地采集 数据不上传</small></div></div>
+    </div>
+  </aside>
+  <main>
+    <header>
+      <div><div class="eyebrow">本机状态</div><h1 id="page-title">系统总览</h1></div>
+      <div class="header-actions"><span id="sampling" class="sampling"><i class="live-dot"></i>等待采样</span><button id="export" class="button" title="导出 JSON 快照"><span class="glyph i-download"></span><span>导出</span></button><button id="settings-button" class="button icon-button" aria-label="打开设置"><span class="glyph i-settings"></span></button><button id="fullscreen-panel" class="button icon-button" aria-label="全屏" title="全屏"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button><button id="close-panel" class="button icon-button" aria-label="收起悬浮窗"><span class="glyph i-x"></span></button></div>
+    </header>
+    <div id="error" role="alert" class="notice error" hidden></div>
+    <div id="preview-notice" class="notice" hidden>浏览器预览模式 实时数据仅在 MacState 应用内可用。</div>
+    <div id="monitor-tabs" class="segmented" role="tablist" aria-label="监控" hidden>
+      <button id="monitor-tab-processes" data-view="processes" role="tab" aria-controls="processes" aria-selected="true" tabindex="0" class="selected">进程</button>
+      <button id="monitor-tab-sensors" data-view="sensors" role="tab" aria-controls="sensors" aria-selected="false" tabindex="-1">传感器</button>
+      <button id="monitor-tab-network" data-view="network" role="tab" aria-controls="network" aria-selected="false" tabindex="-1">网络</button>
+    </div>
+    <section id="overview" class="view">
+      <div class="device-strip"><div><span class="glyph i-monitor"></span><strong id="chip">连接本机中…</strong><span id="model" class="muted"></span></div><span id="device-meta" class="muted">等待原生采集器</span></div>
+      <div class="section-heading"><h2>此刻的 Mac</h2><span id="last-update" class="muted">第一次采样约需数秒</span></div>
+      <div id="hero-metrics" class="hero-grid"></div>
+      <div id="core-grid" class="core-grid current-cores" aria-label="每个逻辑核心占用"></div>
+      <div class="section-heading"><h2>详细指标</h2><div class="segmented" id="groups"><button data-group="all" class="selected">全部</button><button data-group="cpu">CPU</button><button data-group="memory">内存</button><button data-group="gpu">GPU</button><button data-group="power">功耗与电池</button><button data-group="other">其他</button></div></div>
+      <div id="metric-grid" class="overview-columns"><div class="loading">正在读取系统数据…</div></div>
+      <div class="section-heading availability-heading"><h2>采集状态</h2><button id="reset-history" class="text-button">重置峰值</button></div>
+      <div id="availability" class="notice">采样后显示数据来源和设备支持情况。</div>
+    </section>
+    <section id="processes" class="view" role="tabpanel" aria-labelledby="monitor-tab-processes" tabindex="0" hidden>
+      <details class="page-help"><summary>功耗与占用的计算方式</summary><p>功耗合计 CPU 内核能量与按 GPU 执行时间归属的设备能量，主值为当前采样区间，下方为 30 秒平滑。GPU 部分是估算，共享服务及外设开销无法精确归入应用；数据不完整时显示 —。CPU 以单核 100% 计；GPU 为执行时间占比，重叠时可超过 100%。</p></details>
+      <div class="toolbar"><input id="process-search" type="search" placeholder="搜索进程名称、PID、用户或路径" aria-label="搜索进程"><label class="inline-control"><input id="active-only" type="checkbox">只看活跃进程</label><button id="pause-processes" class="button">暂停列表</button><span id="process-count" class="muted"></span></div>
+      <p id="process-power-summary" class="muted" aria-live="polite">等待进程能量基线</p>
+      <div class="table-wrap"><table><thead><tr><th><button data-sort="name">进程</button></th><th><button data-sort="pid">PID</button></th><th><button data-sort="cpu">CPU % ↓</button></th><th><button data-sort="gpu">GPU %</button></th><th><button data-sort="memory">内存</button></th><th><button data-sort="power">估算功耗</button></th><th><button data-sort="readRate">读取 / 秒</button></th><th><button data-sort="writeRate">写入 / 秒</button></th><th><button data-sort="threads">线程</button></th><th><button data-sort="user">用户</button></th></tr></thead><tbody id="process-rows"></tbody></table></div>
+      <div class="pagination"><span id="page-info" class="muted"></span><button id="prev-page" class="button">上一页</button><button id="next-page" class="button">下一页</button></div>
+    </section>
+    <section id="sensors" class="view" role="tabpanel" aria-labelledby="monitor-tab-sensors" tabindex="0" hidden>
+      <details class="page-help"><summary>传感器数据来源</summary><p>展示 AppleSMC 可读取的温度、功率与风扇键。传感器名称因硬件而异，原始键保留用于辨识。未公开或无权限的数据不会填入模拟值。</p></details>
+      <div class="toolbar"><input id="sensor-search" type="search" placeholder="搜索传感器键，例如 Tp、Tg、F0" aria-label="搜索传感器"><span id="sensor-count" class="muted"></span></div>
+      <div id="sensor-grid" class="metric-grid"></div>
+    </section>
+    <section id="network" class="view" role="tabpanel" aria-labelledby="monitor-tab-network" tabindex="0" hidden><details class="page-help"><summary>接口统计范围</summary><p>总览合计活动 en* 物理接口，避免 VPN、网桥重复计数。这里展示全部非回环接口；累计量为系统接口计数器，接口重建后可能重置。</p></details><div id="network-grid" class="metric-grid"></div></section>
+    <section id="storage" class="view" hidden>
+      <div id="storage-notice" class="notice">APFS 卷可能共享容器空间，各卷容量不应相加。这里列出本机可见的存储卷。</div>
+      <article id="disk-access" class="metric-card disk-access-card"><div><strong id="disk-access-title">检查完全磁盘访问权限</strong><p id="disk-access-note">扫描前需确认完全磁盘访问权限。请自行在系统设置 → 隐私与安全 → 完全磁盘访问权限中允许 MacState。</p></div><span class="disk-access-actions"><button id="disk-access-settings" class="button">打开权限设置</button><button id="disk-access-check" class="button">重新检查权限</button></span></article>
+      <div id="volume-grid" class="metric-grid"></div>
+      <div id="disk-analysis" hidden>
+        <nav id="storage-navigation" aria-label="磁盘分析功能">
+          <div id="storage-section-tabs"></div>
+          <button id="storage-export-toggle" class="text-button">导出</button>
+        </nav>
+        <div class="disk-workspace-content">
+        <div class="disk-toolbar"><button id="disk-back" class="button">返回存储卷</button><h2 id="disk-volume-name">磁盘分析</h2><div class="disk-inline-stats" aria-label="索引统计"><strong id="disk-scanned-size">0 B</strong><span id="disk-scanned-count" class="muted"></span></div><button id="disk-sync-pause" class="button">暂停同步</button><button id="disk-sync" class="button">手动同步</button><button id="disk-rescan" class="button">重建索引</button><button id="disk-cancel" class="button">停止扫描</button></div>
+        <div id="file-selection-bar" hidden><button class="text-button" id="file-select-all">全选当前列表</button><button class="text-button" id="file-clear-selection">取消全选</button><span id="file-selection-count" class="muted">已选 0 项</span><button class="button" id="file-copy-selected">拷贝所选</button><button class="button" id="file-trash-selected">移到废纸篓</button><span id="file-interaction-feedback" role="status" class="muted"></span></div>
+        <div id="storage-export-panel" hidden><label>内容<select id="storage-export-source"><option value="analysis">当前分析（当前页及汇总）</option><option value="volumes">所有存储卷</option><option value="large">完整大文件筛选结果</option><option value="history">当前卷完整历史</option></select></label><label>格式<select id="storage-export-format"><option value="json">JSON</option><option value="csv">CSV</option></select></label><button id="storage-export-start" class="button">选择保存位置</button><button id="storage-export-cancel" class="text-button">取消正在导出</button><span id="storage-export-feedback" class="muted" role="status"></span></div>
+        <div id="disk-workbench-view" hidden>
+          <div class="disk-toolbar"><button id="wb-back" class="button">返回文件</button><h2 id="wb-title">空间分析</h2><button id="wb-refresh" class="button">刷新</button><button id="wb-enrich" class="button" hidden>识别本页</button><button id="wb-stop" class="text-button">停止当前分析</button></div>
+          <div class="wb-filters">
+            <input id="wb-search" type="search" placeholder="筛选名称或路径" aria-label="筛选专项分析">
+            <select id="wb-category" aria-label="分析分类"></select>
+            <select id="wb-growth-hours" aria-label="对比时间范围" hidden>
+              <option value="0">与上次比较</option>
+              <option value="1">近 1 小时</option><option value="6">近 6 小时</option><option value="24">近 24 小时</option>
+              <option value="168">近 7 天</option><option value="720">近 30 天</option>
+            </select>
+            <select id="wb-growth-direction" aria-label="变化方向" hidden><option value="increase">占用增加</option><option value="decrease">占用减少</option></select>
+            <label id="wb-since-label" hidden>开始<input id="wb-since" type="datetime-local"></label>
+            <label id="wb-until-label" hidden>结束<input id="wb-until" type="datetime-local"></label>
+          </div>
+          <div id="wb-progress-wrap" hidden><progress id="wb-progress" max="100" aria-label="当前分析进度"></progress><span id="wb-progress-detail" class="muted" role="status"></span></div>
+          <p id="wb-status" class="muted" role="status"></p><div id="wb-stats"></div><div id="wb-chart" class="metric-card" hidden></div>
+          <div id="wb-list" class="metric-card" tabindex="0" aria-label="分析结果"></div>
+          <div class="disk-toolbar wb-pagination"><button id="wb-prev" class="button">上一页</button><span id="wb-page" class="muted"></span><button id="wb-next" class="button">下一页</button></div>
+          <p id="wb-note" class="muted"></p><p id="wb-feedback" role="status" hidden></p>
+        </div>
+        <div id="disk-directory-view">
+          <div class="disk-feature-entries" hidden><button id="disk-types-open" class="metric-card disk-largest-entry" aria-controls="disk-types-view"><span class="glyph i-layout-dashboard" aria-hidden="true"></span><span class="disk-largest-entry-text"><strong>文件类型</strong><span class="muted">九类占用统计</span></span><span class="glyph i-arrow-up-right" aria-hidden="true"></span></button><button id="disk-map-open" class="metric-card disk-largest-entry" aria-controls="disk-map-view"><span class="glyph i-layout-dashboard" aria-hidden="true"></span><span class="disk-largest-entry-text"><strong>空间地图</strong><span class="muted">文件夹与类型</span></span><span class="glyph i-arrow-up-right" aria-hidden="true"></span></button><button id="disk-largest-open" class="metric-card disk-largest-entry" aria-controls="disk-largest-view"><span class="glyph i-list" aria-hidden="true"></span><span class="disk-largest-entry-text"><strong>大文件</strong><span class="muted">排行与筛选</span></span><span class="glyph i-arrow-up-right" aria-hidden="true"></span></button><button class="metric-card disk-largest-entry" data-insight-open="cleanup"><span class="glyph i-list" aria-hidden="true"></span><span class="disk-largest-entry-text"><strong>清理</strong><span class="muted">预览与风险分级</span></span><span aria-hidden="true">↗</span></button><button class="metric-card disk-largest-entry" data-insight-open="apps"><span class="glyph i-list" aria-hidden="true"></span><span class="disk-largest-entry-text"><strong>应用空间</strong><span class="muted">本体与关联数据</span></span><span aria-hidden="true">↗</span></button><button class="metric-card disk-largest-entry" data-insight-open="orphans"><span class="glyph i-list" aria-hidden="true"></span><span class="disk-largest-entry-text"><strong>App 残留</strong><span class="muted">疑似残留与归属</span></span><span aria-hidden="true">↗</span></button><button class="metric-card disk-largest-entry" data-insight-open="cache"><span class="glyph i-list" aria-hidden="true"></span><span class="disk-largest-entry-text"><strong>缓存分析</strong><span class="muted">四类缓存占用</span></span><span aria-hidden="true">↗</span></button>
+          </div>
+          <div class="disk-index-filters"><input id="disk-search" type="search" placeholder="按文件名搜索整个卷（不读取内容）" aria-label="搜索索引文件名"><div id="disk-kind-filters" role="group" aria-label="按文件类型筛选"><button class="button" data-disk-kind="" aria-pressed="true">所有类型</button><button class="button" data-disk-kind="image" aria-pressed="false">图像</button><button class="button" data-disk-kind="audio" aria-pressed="false">音频</button><button class="button" data-disk-kind="video" aria-pressed="false">视频</button><button class="button" data-disk-kind="text" aria-pressed="false">文本</button><button class="button" data-disk-kind="document" aria-pressed="false">文档</button><button class="button" data-disk-kind="archive" aria-pressed="false">压缩包</button><button class="button" data-disk-kind="application" aria-pressed="false">应用</button><button class="button" data-disk-kind="folder" aria-pressed="false">文件夹</button><button class="button" data-disk-kind="link" aria-pressed="false">符号链接</button><button class="button" data-disk-kind="other" aria-pressed="false">其他</button></div></div>
+          <div class="disk-analysis-layout">
+          <article class="metric-card disk-directory-card"><nav id="disk-breadcrumbs" aria-label="磁盘目录路径"></nav><p id="disk-directory-summary" class="muted"></p><div id="disk-sort-controls" role="group" aria-label="文件排序"><button class="text-button" data-disk-sort="name" aria-pressed="false">名称<span class="disk-sort-arrow" aria-hidden="true"></span></button><button class="text-button" data-disk-sort="size" aria-pressed="false">文件大小<span class="disk-sort-arrow" aria-hidden="true"></span></button><button class="text-button" data-disk-sort="modified" aria-pressed="false">修改日期<span class="disk-sort-arrow" aria-hidden="true"></span></button><button class="text-button" data-disk-sort="kind" aria-pressed="false">类型<span class="disk-sort-arrow" aria-hidden="true"></span></button><button class="text-button" data-disk-sort="path" aria-pressed="false">路径<span class="disk-sort-arrow" aria-hidden="true"></span></button></div><div id="disk-entries" role="list" tabindex="0" aria-label="目录与文件占用"></div><div id="disk-page-controls" hidden><button id="disk-page-prev" class="button">上一页</button><span id="disk-page-label" class="muted"></span><button id="disk-page-next" class="button">下一页</button></div></article>
+          </div>
+        </div>
+        <div id="disk-insights-view" hidden>
+          <div class="disk-toolbar"><button id="disk-insights-back" class="button">返回目录分析</button><h2 id="disk-insights-title">清理与应用空间</h2><button id="disk-insights-refresh" class="button">刷新分析</button></div>
+          <div id="disk-insights-tabs" role="group" aria-label="空间分析页面"><button class="button" data-insight-mode="cleanup">清理</button><button class="button" data-insight-mode="apps">应用空间</button><button class="button" data-insight-mode="orphans">App 残留</button><button class="button" data-insight-mode="cache">缓存分析</button></div>
+          <p id="disk-insights-status" class="muted" role="status"></p>
+          <div id="disk-insights-totals"></div>
+          <div class="disk-insights-filters"><input id="disk-insights-search" type="search" placeholder="筛选名称、应用或路径" aria-label="筛选分析项目"><select id="disk-insights-filter" aria-label="风险或缓存分类"></select></div>
+          <div id="disk-insights-list" class="metric-card" tabindex="0" aria-label="空间分析项目"></div>
+          <div id="disk-cleanup-preview" class="metric-card" hidden><strong>清理预览</strong><p id="disk-cleanup-summary"></p><div id="disk-cleanup-paths"></div><label id="disk-cleanup-risk-label"><input id="disk-cleanup-risk" type="checkbox">我已逐项确认高风险项目可能包含设置、应用数据或个人文件</label><div class="disk-toolbar"><button id="disk-cleanup-cancel" class="button">返回选择</button><button id="disk-cleanup-confirm" class="button">确认并移到废纸篓</button></div></div>
+          <div id="disk-insights-footer"><span id="disk-cleanup-selected" class="muted"></span><button id="disk-cleanup-clear" class="button">清空选择</button><button id="disk-cleanup-open" class="button">预览清理</button></div>
+          <p id="disk-insights-feedback" role="status" hidden></p>
+          <p class="disk-files-method muted">复用本地索引；统计为已归属的实际占用估算，受限目录、共享空间及硬链接可能影响结果。疑似残留不代表确认已卸载。移到废纸篓不会立即释放空间；系统目录与共享容器仅供分析。</p>
+        </div>
+        <div id="disk-types-view" hidden>
+          <div class="disk-toolbar"><button id="disk-types-back" class="button">返回目录分析</button><h2>文件类型统计</h2><button id="disk-types-refresh" class="button">刷新统计</button></div>
+          <p id="disk-types-summary" class="muted" role="status"></p><div id="disk-types-grid"></div>
+          <p class="disk-files-method muted">点击分类查看对应文件排行。按元数据规则识别：App 包内文件归入应用，源代码/配置归入开发文件，模型按扩展名及目录识别。实际占用沿用硬链接去重，目录元数据单列；统计不代表可释放空间。</p>
+        </div>
+        <div id="disk-largest-view" hidden>
+          <div class="disk-toolbar"><button id="disk-largest-back" class="button">返回目录分析</button><h2>大文件排行</h2><button id="disk-large-refresh" class="button">刷新列表</button></div>
+          <div id="disk-large-filters">
+            <label>类型<select id="disk-large-kind"><option value="">全部类型</option></select></label>
+            <label>大小口径<select id="disk-large-basis"><option value="logical">文件大小</option><option value="physical">实际占用</option></select></label>
+            <label>至少 MiB<input id="disk-large-min" type="number" min="0" max="1000000000" step="1" value="100"></label>
+            <label>至多 MiB<input id="disk-large-max" type="number" min="0" max="1000000000" step="1" placeholder="不限"></label>
+            <label>修改自<input id="disk-large-after" type="date"></label><label>修改至<input id="disk-large-before" type="date"></label>
+            <label>大小排序<select id="disk-large-order"><option value="desc">从大到小</option><option value="asc">从小到大</option></select></label>
+          </div>
+          <p id="disk-large-summary" class="muted" role="status"></p><p id="disk-files-feedback" role="status" hidden></p>
+          <article class="metric-card disk-largest-card"><div id="disk-largest" role="list" tabindex="0" aria-label="大文件排行"></div><div class="disk-large-pagination"><button id="disk-large-prev" class="button">上一页</button><span id="disk-large-page-label" class="muted"></span><button id="disk-large-next" class="button">下一页</button></div></article>
+          <p class="disk-files-method muted">文件大小可能大于实际占用（例如稀疏文件）；修改日期按本地时间筛选。系统目录及应用包内部文件不允许在此移到废纸篓。</p>
+        </div>
+        <div id="disk-map-view" hidden>
+          <div class="disk-toolbar disk-map-toolbar"><button id="disk-map-back" class="button">返回目录分析</button><h2>空间地图</h2><div class="disk-map-modes" role="group" aria-label="空间地图分组"><button class="button" data-map-mode="folders" aria-pressed="true">按文件夹</button><button class="button" data-map-mode="types" aria-pressed="false">按文件类型</button></div><button id="disk-map-refresh" class="button">刷新地图</button></div>
+          <div class="disk-map-navigation"><button id="disk-map-up" class="button" disabled>上一级</button><nav id="disk-map-crumbs" aria-label="空间地图路径"></nav><button id="disk-map-current-reveal" class="text-button">在 Finder 中显示当前目录</button></div>
+          <p id="disk-map-summary" class="muted" role="status"></p>
+          <div class="disk-map-layout"><article class="metric-card disk-map-card"><div id="disk-map-canvas" role="group" aria-label="按实际占用面积绘制的空间地图"></div><p class="disk-map-hint muted">方块面积代表实际占用 单击选择，双击文件夹进入</p></article><aside class="metric-card disk-map-sidebar"><div id="disk-map-selection"><p class="muted">选择方块查看占用详情</p></div><div id="disk-map-legend" aria-label="地图项目列表"></div></aside></div>
+          <p id="disk-map-note" class="muted"></p>
+        </div>
+        <div class="disk-index-status"><strong id="disk-state" aria-live="polite">正在读取索引</strong><span id="disk-current-path" class="muted"></span><span id="disk-scan-note" role="status"></span></div>
+        <details class="disk-method"><summary>索引说明</summary><p>后台仅索引本地文件的名称、后缀、路径、类型、大小及创建/修改时间，不读取文件内容。首次建立索引后持久保存，文件增删改自动同步，重启后补处理关闭期间的变化。目录占用按实际分配空间统计，硬链接仅计一次；文件大小为逻辑大小，两者可能不同。手机、云端映射、占位文件和其他挂载卷跳过；符号链接不跟随。完整明细每页 100 项，快照、APFS 共享块和无法访问的目录可能造成与卷已用空间的差异。</p></details>
+        </div>
+      </div>
+    </section>
+    <section id="usage" class="view" hidden>
+      <div class="usage-toolbar">
+        <label class="usage-history-label"><span class="glyph i-list" aria-hidden="true"></span><select id="usage-history" aria-label="选择使用记录"><option value="">当前记录</option></select></label>
+        <button id="usage-current" class="text-button">回到当前</button>
+        <div class="usage-record-actions"><button id="usage-storage-history" class="button">存储变化</button><button id="usage-new" class="button">新建记录</button><button id="usage-export" class="button icon-button" aria-label="导出使用记录"><span class="glyph i-download"></span></button><button id="usage-delete" class="button icon-button" aria-label="删除这条使用记录"><span class="glyph i-x"></span></button></div>
+      </div>
+      <article class="usage-chart-card">
+        <div class="usage-chart-heading"><div><h2 id="usage-chart-title">电量与使用过程</h2><span id="usage-period" class="muted">正在开始记录…</span></div><span id="usage-mode" class="usage-mode">等待采样</span></div>
+        <div id="usage-chart" class="usage-chart"><div class="usage-empty">从新版启动后开始记录，电量曲线和前台应用时间会在这里累积。</div></div>
+        <div class="usage-chart-inspector"><span id="usage-inspector" class="muted">移动到曲线上查看采样数据</span><input id="usage-cursor" type="range" min="0" max="0" value="0" aria-label="查看历史采样点" hidden></div>
+        <div class="usage-chart-caption"><span class="usage-legend"><span class="usage-legend-line"></span><span id="usage-curve-label">电量</span><span class="usage-legend-segment"></span>前台应用</span><span>空白段为睡眠或停止采集</span></div>
+      </article>
+      <div class="usage-summary" aria-label="使用摘要">
+        <article><span class="usage-stat-label"><span class="glyph i-zap"></span>整机平均功耗</span><strong id="usage-average-power">—</strong><span id="usage-power-note" class="muted">等待有效功率读数</span></article>
+        <article><span class="usage-stat-label"><span class="glyph i-activity"></span>已使用</span><strong id="usage-duration">0 秒</strong><span class="muted">已观测的亮屏使用时长</span></article>
+        <article><span class="usage-stat-label"><span class="glyph i-battery"></span>满电理论续航</span><strong id="usage-runtime">—</strong><span id="usage-runtime-note" class="muted">电池供电时根据耗电速度估算</span></article>
+      </div>
+      <article class="usage-app-card">
+        <div class="usage-app-heading"><h2>应用耗能 <span id="usage-app-count" class="muted"></span></h2><div><input id="usage-search" type="search" placeholder="查找应用" aria-label="搜索使用过的应用"><select id="usage-sort" aria-label="应用使用记录排序"><option value="duration">前台时长 ↓</option><option value="power">平均功耗 ↓</option><option value="energy">累计耗能 ↓</option><option value="temperature">最高温度 ↓</option><option value="name">名称 A–Z</option></select></div></div>
+        <div id="usage-apps"><div class="usage-empty">正在累积前台应用使用时间…</div></div>
+        <details class="usage-method"><summary>统计说明与保存位置</summary><p>点击应用行可展开主进程及全部已记录的辅助进程，包括已退出的进程。每个进程保留平均估算功耗、累计耗能与有效读数覆盖率；相同 PID 的不同启动实例分别记录。各进程按自己的有效区间平均，平均值不能直接相加。旧记录未采集的进程明细无法补齐。</p><p>应用合计功耗 = CPU 内核能量增量 + GPU 设备能量按实际执行时间归属的份额，再除以采样秒数。GPU 总能量由 IOReport 读取，已经反映频率变化；执行时间来自 IOGPU AppUsage，包括受保护进程的 GPU 客户端，不使用前台时长或提交次数。合并主进程与可归属辅助进程，包含后台运行，界面保留一列功耗。GPU 时间比例不能区分不同任务的能耗强度，因此仍为估算，不能保证完整应用实测准确。</p><p>平均功耗按有效采样时长加权；累计 Wh 由原始能量增量计算，不使用平滑值积分。权限受限、首采样、PID 重用或数据缺失时不补零。GPU 客户端变化或能量/执行时间窗口错位时暂停相关归属；只对有效完整区间积分。应用进程数据不齐时总功耗显示不可用，并标记已读取进程数。未归入应用的进程单列“其他进程（已读取部分）”，不再把整机差额分给应用。整机功耗与应用计数独立统计，合计不强制相等。</p><p>前台时长与监测时长分别显示；温度是前台时整机 CPU 温度。旧记录完整保留并标注旧算法，新算法会开始新的记录。充电、电池供电和连接电源自动分段，外接电源的长记录按天分段；仅保留最近 30 条。睡眠和锁屏时段不计入使用时长。续航估算至少需要 5 分钟有效放电及 2% 已观测电量下降。</p><p>历史保存在本机 ~/Library/Application Support/MacState/usage-history.json。不会读取新版启动前的应用历史。</p>
+      </article>
+    </section>
+    <section id="screenshot" class="view" hidden>
+      <div class="shot-toolbar"><button class="button" data-shot-capture="region">自由截屏 色值</button><button class="button" data-shot-capture="window">指定窗口</button><button class="button" data-shot-capture="screen">全屏截取</button><select id="shot-display" aria-label="全屏显示器"></select><button class="text-button" id="shot-cancel" disabled>取消截屏</button><button class="button" id="shot-settings-toggle">截屏设置</button></div>
+      <div id="shot-permission" class="notice" hidden><span>未获得屏幕录制权限，请在系统设置中手动授权。</span><button class="button" id="shot-permission-open">打开权限设置</button><button class="button" id="shot-permission-check">重新检测</button></div>
+      <p id="shot-status" class="muted" role="status">截屏不会隐藏任何现有窗口。区域或窗口选择按 Esc 取消。</p>
+      <div class="section-heading"><h2>最近截图</h2><span class="muted" id="shot-history-count"></span></div><div id="shot-history" class="shot-history"></div>
+    </section>
+    <section id="misc" class="view" hidden>
+      <div class="settings-layout">
+        <div class="settings-section wide">
+          <div class="section-heading"><h2>显示器亮度</h2><button id="refresh-brightness" class="text-button">重新检测</button></div>
+          <p>分别调节每台显示器。支持系统背光、DDC/CI 硬件背光；无法硬件控制时使用软件调暗，并明确标注控制方式。</p>
+          <div id="brightness-displays" class="brightness-displays" aria-label="显示器亮度控制"><p class="muted">正在检测显示器…</p></div>
+          <p id="brightness-status" class="misc-status" role="status" aria-live="polite">仅拖动滑块时修改亮度；不会自动改变显示器设置。</p>
+        </div>
+        <div class="settings-section wide">
+          <h2>调度中心</h2>
+          <p>从这里打开 macOS 调度中心，也可以将全局 ⌘Tab 快捷键改为打开调度中心。</p>
+          <div class="misc-action-row"><button id="open-mission-control" class="button">打开调度中心</button></div>
+          <label class="setting-row">将 ⌘Tab 改为打开调度中心<input id="command-tab-mission-control" type="checkbox" role="switch" aria-describedby="command-tab-status"></label>
+          <p id="command-tab-status" class="misc-status" aria-live="polite">快捷键映射已关闭。</p>
+          <div id="command-tab-permission-actions" class="misc-action-row" hidden><button id="command-tab-access-settings" class="button">打开权限设置</button><button id="retry-command-tab" class="button">重新检测</button></div>
+        </div>
+      </div>
+    </section>
+    <section id="settings" class="view" hidden>
+      <div class="settings-navigation">
+        <div id="settings-tabs" class="segmented" role="tablist" aria-label="设置分类">
+          <button id="settings-tab-general" data-settings-category="general" role="tab" aria-controls="settings-general" aria-selected="true" tabindex="0" class="selected">通用</button>
+          <button id="settings-tab-appearance" data-settings-category="appearance" role="tab" aria-controls="settings-appearance" aria-selected="false" tabindex="-1">外观与面板</button>
+          <button id="settings-tab-menu" data-settings-category="menu" role="tab" aria-controls="settings-menu" aria-selected="false" tabindex="-1">状态栏</button>
+          <button id="settings-tab-screenshot" data-settings-category="screenshot" role="tab" aria-controls="settings-screenshot" aria-selected="false" tabindex="-1">截屏</button>
+          <button id="settings-tab-files" data-settings-category="files" role="tab" aria-controls="settings-files" aria-selected="false" tabindex="-1">文件操作</button>
+          <button id="settings-tab-about" data-settings-category="about" role="tab" aria-controls="settings-about" aria-selected="false" tabindex="-1">关于</button>
+        </div>
+        <div id="save-status" class="muted" aria-live="polite">已保存</div>
+      </div>
+      <div id="settings-general" class="settings-category" role="tabpanel" aria-labelledby="settings-tab-general" tabindex="0">
+        <div class="settings-layout">
+          <div class="settings-section wide"><h2>采样与启动</h2><label class="setting-row">采样间隔<select id="interval"><option value="1">1 秒</option><option value="2">2 秒</option><option value="3">3 秒</option><option value="5">5 秒</option><option value="10">10 秒</option></select></label><label class="setting-row">历史时间窗口<select id="history"><option value="60">1 分钟</option><option value="120">2 分钟</option><option value="300">5 分钟</option><option value="600">10 分钟</option></select></label><label class="setting-row">登录时自动启动<input id="launch-login" type="checkbox" role="switch"></label><p>设置自动保存到本机。电池与存储卷每 10 秒刷新，其他数据按采样间隔刷新。</p></div>
+        </div>
+      </div>
+      <div id="settings-appearance" class="settings-category" role="tabpanel" aria-labelledby="settings-tab-appearance" tabindex="0" hidden>
+        <div class="settings-layout">
+          <div class="settings-section wide"><h2>主题与布局</h2><label class="setting-row">外观<select id="theme"><option value="dark">深色</option><option value="light">浅色</option><option value="system">跟随系统</option></select></label><div class="glass-setting"><label for="glass-opacity">玻璃透明度<output id="glass-opacity-value" for="glass-opacity">0%</output></label><input id="glass-opacity" type="range" min="0" max="100" step="1" value="0" aria-describedby="glass-description"><div class="glass-range-labels"><span>0% 磨砂</span><span>100% 轻透</span></div><p id="glass-description">0% 为磨砂，调高透明度可减少着色。背景模糊由 macOS 控制；开启原生玻璃增强后可获得系统透镜效果。</p><label class="setting-row">原生玻璃增强<input id="native-glass-enabled" type="checkbox" role="switch"></label><p id="lens-status" aria-live="polite">低开销模式 一层系统磨砂背景，组件使用轻量透明层。无需录屏权限。</p><p>增强效果默认关闭，以降低合成开销。所有模式均不采集屏幕、不使用自定义透镜渲染，无需任何录屏授权。</p></div><label class="setting-row">紧凑面板<input id="compact" type="checkbox" role="switch"></label></div>
+          <div class="settings-section wide"><div class="section-heading"><h2>面板展示内容</h2><div><button id="show-all" class="text-button">全部显示</button><button id="available-only" class="text-button">仅显示可用</button></div></div><p>选择总览中的指标；完整进程、传感器和网络接口可在“监控”中查看，存储卷可从侧栏查看。</p><div id="panel-options" class="panel-options"></div></div>
+        </div>
+      </div>
+      <div id="settings-menu" class="settings-category" role="tabpanel" aria-labelledby="settings-tab-menu" tabindex="0" hidden>
+      <div class="settings-layout">
+        <div class="settings-section wide">
+          <div class="section-heading"><h2>状态栏文字样式</h2><button id="reset-menu-style" class="text-button">恢复默认样式</button></div>
+          <p>名称在上，数值在下。网络为同一栏：上传在上，下载在下，两行均使用数值样式。字体过大时会按菜单栏高度等比例缩小，避免文字被裁切。</p>
+          <div class="menu-style-grid"><fieldset id="name-style"><legend>名称样式</legend></fieldset><fieldset id="value-style"><legend>数值样式</legend></fieldset></div>
+          <div class="menu-preview"><span class="muted">实际状态栏预览 2 倍放大</span><img id="menu-preview" alt="状态栏原生渲染预览" hidden><p id="menu-preview-wait" class="muted">等待状态栏预览…</p></div>
+        </div>
+        <div class="settings-section wide"><h2>状态栏栏目</h2><p>名称在上方，多个参数在下方横向排列。点击栏目打开完整面板；网络可保留上传在上、下载在下。</p><label class="setting-row">栏目之间的间距（pt）<input id="menu-column-spacing" type="number" min="0" max="40" step="1" value="4"></label><label class="setting-row">风扇转速隐藏 RPM 单位<input id="hide-fan-unit" type="checkbox"></label><div id="menu-options"></div><div id="menu-order"><button id="add-menu-column" class="button">添加栏目</button></div></div>
+      </div>
+      </div>
+      <div id="settings-screenshot" class="settings-category" role="tabpanel" aria-labelledby="settings-tab-screenshot" tabindex="0" hidden>
+        <p id="shot-settings-feedback" class="muted" role="status" aria-live="polite"></p>
+        <div id="shot-settings" class="settings-layout">
+          <div class="settings-section">
+            <h2>文件输出</h2>
+            <div class="shot-settings-grid">
+              <label>截图去向<select id="shot-destination"><option value="both">保存并复制</option><option value="clipboard">仅复制</option><option value="file">仅保存</option></select></label>
+              <label>文件格式<select id="shot-format"><option value="png">PNG（无损）</option><option value="jpg">JPEG</option></select></label>
+              <label class="shot-prefix-field">文件名前缀<input id="shot-prefix" maxlength="60"></label>
+            </div>
+            <div class="shot-directory"><div><span>保存目录</span><span id="shot-directory" class="muted"></span></div><button class="button" id="shot-choose-directory">选择目录</button></div>
+          </div>
+          <div class="settings-section">
+            <h2>拍摄选项</h2>
+            <label class="setting-row">延时（秒）<input id="shot-delay" type="number" min="0" max="30" step="1"></label>
+            <label class="setting-row">全屏包含鼠标指针<input id="shot-pointer" type="checkbox" role="switch"></label>
+            <label class="setting-row">窗口包含阴影<input id="shot-shadow" type="checkbox" role="switch"></label>
+            <label class="setting-row">完成后打开预览<input id="shot-preview" type="checkbox" role="switch"></label>
+          </div>
+          <div class="settings-section wide">
+            <div class="section-heading"><h2>全局快捷键</h2><button id="shot-shortcuts-reset" class="text-button">恢复默认</button></div>
+            <div id="shot-shortcuts" class="shot-shortcuts"></div>
+            <p id="shot-shortcut-error" role="alert"></p>
+            <p>点击输入框后按组合键，至少包含 ⌘ / ⌃ / ⌥ 之一；Esc 取消录制。</p>
+            <details class="page-help"><summary>最近截图的保存规则</summary><p>仅复制的截图也保留在本机最近截图中，最多 100 张；超出后仅移除内部缓存，保存目录中的文件不删除。</p></details>
+          </div>
+        </div>
+      </div>
+      <div id="settings-files" class="settings-category" role="tabpanel" aria-labelledby="settings-tab-files" tabindex="0" hidden>
+      <div class="settings-layout">
+        <div class="settings-section wide"><h2>文件 打开为</h2><p>右键菜单中的应用程序。终端类应用用于打开文件所在目录；文件夹直接打开其目录。</p><div id="file-open-applications"></div><button id="file-add-application" class="button">添加应用程序</button><span id="file-app-feedback" class="muted"></span></div>
+      </div>
+      </div>
+      <div id="settings-about" class="settings-category" role="tabpanel" aria-labelledby="settings-tab-about" tabindex="0" hidden>
+      <div class="settings-layout">
+        <div class="settings-section wide"><h2>应用功耗 CPU 能量 + GPU 归属</h2><p>自动读取 CPU 内核能量和 GPU 设备能量，使用实际 GPU 执行时间归属，合并主进程及辅助进程，包含后台运行。主值为当前区间，下方为 30 秒平滑；历史按原始能量积分。按上方采样间隔更新，无需管理员授权。</p><p>GPU 部分为估算，不能保证逐应用硬件实测准确。应用进程数据不齐、GPU 客户端变化或采样窗口错位时合计不可用，并标记覆盖数；未归属和共享开销不强制分摊。</p></div>
+        <div class="settings-section wide"><h2>数据支持说明</h2><p>CPU / 内存 / 网络 / 进程：系统原生 API。GPU：驱动公开的设备统计；逐进程 GPU 使用 IOGPU AppUsage 累计执行时间。应用功耗：CPU 内核能量 + GPU 执行时间归属估算。温度 / 风扇 / 硬件功率：SMC 只读接口，取决于机型和系统权限。实时 CPU/GPU 频率、ANE 功率和逐进程 GPU 计数器并非所有 macOS 设备都可读取。</p><p>本应用不结束用户进程、不写入 SMC、不修改风扇，也不需要联网。</p><button id="quit" class="button danger">退出 MacState</button></div>
+      </div>
+      </div>
+    </section>
+    <footer><span>MacState <span class="muted">0.1.0</span></span><span>本地采集</span><span id="collection-time">—</span></footer>
+  </main>
+  <dialog id="developer-folder-dialog"><form id="developer-folder-form"><h2>添加开发目录</h2><p class="muted">输入文件夹名称，例如 vendor。匹配已有索引中的所有同名目录，不区分大小写；不会重新扫描磁盘。</p><label for="developer-folder-input">文件夹名称</label><input id="developer-folder-input" type="text" maxlength="255" required autocomplete="off" placeholder="例如 vendor"><p id="developer-folder-error" role="alert"></p><div class="usage-dialog-actions"><button id="developer-folder-cancel" type="button" class="button">取消</button><button id="developer-folder-save" type="submit" class="button">添加</button></div></form></dialog>
+  <dialog id="process-detail"><div class="section-heading"><h2 id="detail-title">进程详情</h2><button id="close-detail" class="button">关闭</button></div><dl id="detail-content"></dl></dialog>
+  <dialog id="usage-delete-dialog"><h2>删除这条使用记录？</h2><p id="usage-delete-description"></p><p class="muted">删除后无法恢复。删除当前记录后会开始一条新的记录。</p><div class="usage-dialog-actions"><button id="usage-delete-cancel" class="button">取消</button><button id="usage-delete-confirm" class="button danger">删除记录</button></div></dialog>
+</body>
+</html>

@@ -1,0 +1,25 @@
+Lucide icons
+https://github.com/lucide-icons/lucide
+Downloaded via official GitHub Contents API; blob identifiers:
+cpu.svg 0307c0e4ad2406f68158978dd183fd38d7b80dd4
+memory-stick.svg b8ed70aa825783b1d599b03d0f0eb1126a426298
+monitor.svg e869f2f27acef115bc121a0bf62e1d01834c6b17
+network.svg e166b3535ca33f9ceee49d2215dd78374689865e
+thermometer.svg 808334dc99524049a5813e24f9d7b5c6dd56431c
+zap.svg 6dde2a649218cbc21b4ba716a82095022f6876c4
+battery.svg 1e87f1b9da2927635c1263ab74703ab32ab3e127
+hard-drive.svg 4a99fab39de0ee52378ed314c415ea2188223768
+activity.svg 629b81c9fd020f3afec659daa5c9c7e5a1d07445
+settings.svg 4c6263af909841a3911f41a385021778eacba736
+x.svg e31794349d3eecea1b3ae8e974b68bb8f4becda7
+arrow-up-right.svg 93bdeea23865b4b238dd3038414160949a10f925
+download.svg 5c75527bde1fe8259efb72c5b590bedfae28c05e
+fan.svg 5b1ecb8acc63e45e3197fbbfd13b467ca2b60462
+chevron-down.svg e70d30b88399a721cd5d20d0d26756608cf8c42b
+layout-dashboard.svg 8d6065453975433d10ea8b87d38b6ce8bf360dea
+list.svg 0d88fb189cde6db143ee290aa12c255d7344f13c
+LICENSE 718bb3f0e44153809972abed31839375804bf652
+Vendored SVG assets only; no runtime network requests.
+
+MacState-authored action icons matching the existing 24px / 2px stroke system:
+pencil.svg, copy.svg, folder-open.svg, trash-2.svg

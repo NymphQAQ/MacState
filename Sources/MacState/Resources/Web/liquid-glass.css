@@ -1,0 +1,217 @@
+/* Transparent H5 surfaces sit above the native macOS Liquid Glass material. */
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif;
+  --bg: transparent;
+  --text: #f5f5f7;
+  --muted: #c1c3c9;
+  --accent: #64aaff;
+  --accent-bg: rgba(10, 132, 255, .21);
+  --cpu: #30d158;
+  --memory: #64aaff;
+  --gpu: #ffb340;
+  --power: #ff827a;
+  --danger: #ff827a;
+  --glass-rgb: 255, 255, 255;
+  --glass-footer-rgb: 24, 26, 31;
+  --glass-surface-alpha: .04425;
+  --glass-control-alpha: .095;
+  --glass-sidebar-alpha: .034;
+  --glass-footer-alpha: .7;
+  --sidebar: rgba(var(--glass-rgb), var(--glass-sidebar-alpha));
+  --card: rgba(var(--glass-rgb), var(--glass-surface-alpha));
+  --card-hover: rgba(var(--glass-rgb), var(--glass-control-alpha));
+  --border: rgba(255, 255, 255, .13);
+  --edge-light: rgba(255, 255, 255, .22);
+  --edge-shadow: rgba(0, 0, 0, .13);
+  --surface-sheen: rgba(255, 255, 255, .08);
+  --shadow: 0 8px 24px rgba(0, 0, 0, .12);
+}
+
+html, body { background: transparent !important; }
+body { -webkit-font-smoothing: antialiased; }
+body.light {
+  --bg: transparent;
+  --text: #202126;
+  --muted: #5c6069;
+  --accent: #006cde;
+  --accent-bg: rgba(10, 132, 255, .13);
+  --cpu: #168c39;
+  --memory: #0076df;
+  --gpu: #b36b00;
+  --power: #d34036;
+  --danger: #c9362d;
+  --glass-rgb: 255, 255, 255;
+  --glass-footer-rgb: 245, 246, 249;
+  --sidebar: rgba(var(--glass-rgb), var(--glass-sidebar-alpha));
+  --card: rgba(var(--glass-rgb), var(--glass-surface-alpha));
+  --card-hover: rgba(var(--glass-rgb), var(--glass-control-alpha));
+  --border: rgba(40, 45, 55, .12);
+  --edge-light: rgba(255, 255, 255, .7);
+  --edge-shadow: rgba(25, 35, 50, .07);
+  --surface-sheen: rgba(255, 255, 255, .25);
+  --shadow: 0 8px 24px rgba(25, 35, 50, .07);
+}
+
+/* A narrow navigation rail preserves the density of the monitor. */
+.sidebar {
+  background: var(--sidebar);
+  border-right: 0.5px solid var(--border);
+  box-shadow: inset -1px 0 rgba(255, 255, 255, .03);
+}
+.brand-icon {
+  background: #0a84ff;
+  color: #fff;
+  border: 0.5px solid rgba(255, 255, 255, .24);
+  border-radius: 11px;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .27), 0 2px 5px rgba(0, 65, 140, .15);
+}
+.nav { border-radius: 13px; color: var(--muted); transition: background .15s, color .15s; }
+.nav:hover { background: var(--card-hover); }
+.nav.active {
+  color: var(--accent);
+  background: var(--accent-bg);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .1);
+}
+.live-dot { background: var(--cpu); }
+header h1 { font-weight: 650; letter-spacing: -.3px; }
+.header-actions { gap: 5px; }
+.device-strip { border-bottom-color: var(--border); }
+.device-strip > div > .glyph { color: var(--accent); }
+
+/* Small edge reflections distinguish floating controls from content surfaces. */
+.button, .segmented, .order-chip, .parameter-control select, .column-controls select {
+  background: var(--card);
+  border-color: var(--border);
+  box-shadow: inset 0 1px var(--edge-light), 0 1px 3px var(--edge-shadow);
+}
+.button { border-radius: 999px; font-weight: 500; }
+.button:hover { background: var(--card-hover); border-color: var(--edge-light); }
+.button:active { box-shadow: inset 0 1px 3px var(--edge-shadow); }
+.button:disabled { box-shadow: none; }
+.icon-button { width: 29px; height: 29px; }
+.text-button { border-radius: 999px; }
+.text-button:hover { background: var(--accent-bg); }
+.segmented { border-radius: 999px; padding: 3px; }
+.segmented button { border-radius: 999px; }
+.segmented button.selected {
+  background: var(--card-hover);
+  color: var(--text);
+  box-shadow: inset 0 1px var(--edge-light), 0 1px 4px var(--edge-shadow);
+}
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The four primary values are slightly raised; detailed rows stay compact. */
+.summary-tile {
+  background-color: var(--card);
+  background-image: linear-gradient(145deg, var(--surface-sheen), transparent 65%);
+  border-color: var(--border);
+  border-radius: 16px;
+  box-shadow: inset 0 1px var(--edge-light), 0 2px 7px var(--edge-shadow);
+  transition: border-color .15s, background-color .15s;
+}
+.summary-tile:hover { border-color: var(--tone); background-color: var(--card-hover); }
+.summary-label { font-weight: 600; }
+.summary-value { font-family: Menlo, "SF Mono", monospace; font-weight: 500; }
+.summary-value small, .row-value small {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif;
+}
+.metric-icon { color: var(--tone); }
+.summary-label > .metric-icon {
+  width: 23px;
+  height: 23px;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--tone) 15%, transparent);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .09);
+}
+.summary-label > .metric-icon .glyph { width: 14px; height: 14px; }
+.summary-chart .chart .area { opacity: .1; }
+.core-grid { border-radius: 11px; background: var(--card); border-color: var(--border); }
+.core-progress, .core-progress::-webkit-progress-bar { background: var(--border); }
+.metric-section {
+  background: var(--card);
+  border-color: var(--border);
+  border-radius: 13px;
+  box-shadow: inset 0 1px var(--edge-light), 0 1px 4px var(--edge-shadow);
+}
+.metric-section-title { background: transparent; border-color: var(--border); }
+.metric-row { border-color: var(--border); }
+.metric-row > summary { transition: background .12s; }
+.metric-row > summary:hover, .metric-row[open] > summary { background: var(--card-hover); }
+.row-value { font-family: Menlo, "SF Mono", monospace; }
+.row-detail { background: var(--sidebar); }
+.row-detail strong { color: var(--text); }
+.is-unavailable .metric-icon { opacity: .6; }
+
+/* Secondary views use the same material, rather than opaque page backgrounds. */
+.settings-section, .metric-card, .notice, .table-wrap, .menu-preview, .menu-column,
+.menu-style-grid fieldset {
+  background: var(--card);
+  border-color: var(--border);
+  border-radius: 14px;
+  box-shadow: inset 0 1px var(--edge-light), 0 1px 5px var(--edge-shadow);
+}
+.settings-section { min-width: 0; }
+.settings-section h2 { font-weight: 600; }
+.notice { color: var(--muted); }
+.notice.error { color: var(--danger); border-color: var(--danger); }
+.setting-row { gap: 12px; border-color: var(--border); }
+.setting-row select, .menu-style-grid input[type=number], .menu-style-grid input[type=color],
+.menu-column input, #menu-column-spacing, .toolbar input[type=search] {
+  background: var(--card);
+  border-color: var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  box-shadow: inset 0 1px 3px var(--edge-shadow);
+}
+.column-controls select, .parameter-control select { border-radius: 8px; padding: 5px; max-width: 100%; }
+.column-controls label { max-width: 100%; min-width: 0; }
+.column-controls input { max-width: 100%; }
+input[type=checkbox], input[type=range] { accent-color: #0a84ff; }
+.menu-column legend, .menu-style-grid legend { color: var(--text); }
+.menu-preview { background: var(--sidebar); }
+.table-wrap { border-radius: 13px; }
+thead { background: var(--sidebar); }
+th, td { border-color: var(--border); }
+tbody tr:hover { background: var(--card-hover); }
+dialog {
+  background: rgba(var(--glass-footer-rgb), .92);
+  border-color: var(--edge-light);
+  border-radius: 20px;
+  box-shadow: inset 0 1px var(--edge-light), 0 18px 48px var(--edge-shadow);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+  backdrop-filter: blur(24px) saturate(1.35);
+}
+dialog::backdrop { background: rgba(0, 0, 0, .2); }
+footer {
+  background: rgba(var(--glass-footer-rgb), var(--glass-footer-alpha));
+  border-color: var(--border);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
+}
+
+.glass-setting { padding: 12px 0 10px; border-bottom: 0.5px solid var(--border); }
+.glass-setting > label { display: flex; justify-content: space-between; gap: 12px; font-size:12px; }
+.glass-setting output { font-family: Menlo, "SF Mono", monospace; color: var(--accent); }
+.glass-setting input[type=range] { width: 100%; margin: 12px 0 4px; cursor: pointer; }
+.glass-range-labels { display: flex; justify-content: space-between; font-size:12px; color: var(--muted); }
+.glass-setting p { margin: 7px 0 0; font-size:12px; }
+/* The window supplies the shared blur in economical mode. */
+body.economical-glass footer,
+body.economical-glass dialog {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+@media (max-width: 680px) {
+  .summary-tile { border-radius: 13px; }
+  .summary-label { gap: 5px; }
+  .summary-label > .metric-icon { width: 19px; height: 19px; border-radius: 6px; }
+  .summary-label > .metric-icon .glyph { width: 12px; height: 12px; }
+  footer > span:nth-child(2) { max-width: 62%; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .summary-tile, .nav, .metric-row > summary { transition: none; }
+}

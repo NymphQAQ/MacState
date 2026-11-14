@@ -1,0 +1,27 @@
+/* The matching native lens supplies the rim, shading, blur and refraction.
+   Keep border widths for layout, but never paint an extra dark CSS outline. */
+body.native-component-glass [data-native-glass] {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+body.native-component-glass .nav.active,
+body.native-component-glass .segmented > button.selected {
+  background: var(--accent-bg) !important;
+}
+body.native-component-glass button[data-native-glass]:hover,
+body.native-component-glass select[data-native-glass]:hover {
+  background: rgba(var(--glass-rgb), .06) !important;
+}
+header { user-select: none; }
+header > :first-child { cursor: grab; }
+.column-controls button, .parameter-control button { border-radius: 8px; }
+.usage-summary > article { border-radius: 12px; }
+body.native-component-glass .usage-summary {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  gap: 6px;
+}

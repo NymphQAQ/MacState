@@ -1,0 +1,137 @@
+.volume-analyze { display:inline-flex; align-items:center; gap:5px; padding:5px 9px; font-size:12px; }
+.volume-analyze .glyph { width:13px; height:13px; color:#5aa9ff; }
+.disk-access-card { display:flex; align-items:center; gap:16px; margin-bottom:12px; padding:14px 16px; }
+.disk-access-card > div { flex:1; min-width:0; }
+.disk-access-card strong { font-size:12px; color:#5aa9ff; }
+.disk-access-card p { margin:6px 0 0; color:var(--muted); font-size:12px; line-height:1.7; }
+.disk-access-card .button { flex:none; font-size:12px; }
+.disk-access-actions { display:flex; flex:none; flex-wrap:wrap; gap:8px; }
+.disk-entry-size small { max-width:190px; white-space:normal; line-height:1.4; }
+.disk-toolbar { display:flex; align-items:center; gap:10px; margin:4px 0 14px; }
+.disk-toolbar h2 { flex:1; margin:0; font-size:14px; overflow-wrap:anywhere; }
+.disk-scan-card { margin:12px 0; }
+.disk-scan-summary { display:flex; align-items:baseline; flex-wrap:wrap; gap:10px 20px; }
+#disk-state { font-size:12px; color:#5aa9ff; }
+#disk-state[data-state="completed"] { color:#32d74b; }
+#disk-state[data-state="failed"], #disk-state[data-state="cancelled"] { color:#ffb340; }
+#disk-scanned-size { font-size:28px; font-variant-numeric:tabular-nums; }
+#disk-scanned-count { margin-left:auto; font-size:12px; }
+#disk-current-path { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; margin:9px 0 0; }
+#disk-scan-note:empty { display:none; }
+#disk-scan-note { color:#ffb340; font-size:12px; line-height:1.6; margin:9px 0 0; }
+.disk-analysis-layout { display:grid; grid-template-columns:minmax(0,1fr); gap:12px; align-items:start; }
+.disk-analysis-layout h3 { font-size:14px; margin:0 0 10px; }
+.disk-largest-card h3 { color:#ffb340; }
+#disk-breadcrumbs { display:flex; align-items:center; flex-wrap:wrap; gap:4px; padding-bottom:9px; border-bottom:0.5px solid var(--border); font-size:12px; }
+#disk-breadcrumbs button { padding:3px 5px; font-size:12px; }
+#disk-breadcrumbs button:last-child { color:var(--text); font-weight:600; }
+#disk-directory-summary { margin:10px 0; font-size:12px; }
+#disk-entries, #disk-largest { max-height:450px; overflow:auto; }
+.disk-entry { display:flex; align-items:center; gap:4px; border-top:0.5px solid var(--border); min-width:0; }
+.disk-entry:first-child { border-top:0; }
+.disk-entry-main { display:flex; align-items:center; gap:8px; padding:10px 0; flex:1; min-width:0; text-align:left; background:transparent; border:0; color:var(--text); }
+.disk-entry-main:disabled { opacity:1; cursor:default; }
+.disk-entry-main:not(:disabled):hover .disk-entry-name { color:#5aa9ff; }
+.disk-entry-main > .glyph { flex:none; width:16px; height:16px; color:#5aa9ff; }
+.disk-largest-card .disk-entry-main > .glyph { color:#ffb340; }
+.disk-entry-text { flex:1; min-width:0; }
+.disk-entry-name { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
+.disk-entry-path { display:block; font-size:12px; margin-top:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.disk-entry-text progress { display:block; width:100%; height:3px; margin-top:6px; appearance:none; border:0; background:var(--border); border-radius:3px; }
+.disk-entry-text progress::-webkit-progress-bar { background:var(--border); border-radius:3px; }
+.disk-entry-text progress::-webkit-progress-value { background:#5aa9ff; border-radius:3px; }
+.disk-entry-size { flex:none; font-size:12px; text-align:right; font-variant-numeric:tabular-nums; }
+.disk-entry-size small { display:block; color:var(--muted); font-size:12px; margin-top:3px; }
+.disk-reveal { flex:none; padding:5px; }
+.disk-reveal .glyph { width:14px; height:14px; }
+#disk-page-controls { display:flex; align-items:center; justify-content:space-between; gap:7px; font-size:12px; padding-top:10px; }
+.disk-method { font-size:12px; line-height:1.7; color:var(--muted); margin:12px 0 0; }
+body.compact .disk-toolbar { margin-bottom:9px; }
+body.compact .disk-entry-main { padding:7px 0; }
+@media(max-width:780px) { .disk-analysis-layout { grid-template-columns:minmax(0,1fr); } #disk-largest { max-height:300px; } }
+
+.volume-index {display:flex;flex-direction:column;gap:7px;margin-top:14px;padding-top:12px;border-top:0.5px solid var(--border);min-width:0}
+.volume-index-label {font-size:14px;color:var(--accent)}
+.volume-index-detail,.volume-index-path {font-size:12px}
+.volume-index-path {overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.volume-index-progress {width:100%;height:4px;accent-color:var(--accent)}
+.disk-entry-metadata {display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:3px 0}
+
+.disk-index-filters {display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.disk-index-filters input {flex:1;min-width:0}
+.disk-index-filters input {padding:9px 12px;border-radius:12px;border:0.5px solid var(--border);background:var(--surface);color:inherit;font:inherit}
+
+.disk-largest-entry { display:flex;align-items:center;gap:12px;width:150px;max-width:100%;padding:13px 16px;text-align:left;font:inherit;color:var(--text);cursor:pointer; }
+.disk-largest-entry > .glyph { width:22px;height:22px;flex:none;color:#ffb340; }
+.disk-largest-entry > .glyph:last-child { width:16px;height:16px;margin-left:auto; }
+.disk-largest-entry-text { display:flex;flex-direction:column;gap:5px; }
+.disk-largest-entry-text strong { font-size:14px; }
+.disk-largest-entry-text .muted { font-size:12px; }
+.disk-largest-entry:hover { border-color:#ffb340; }
+#disk-kind-filters { display:flex;gap:6px;overflow-x:auto;padding:2px 1px 5px; }
+#disk-kind-filters button { flex:none;white-space:nowrap;font-size:12px;padding:6px 10px; }
+#disk-kind-filters button[aria-pressed="true"] { color:#5aa9ff;border-color:#5aa9ff;background:rgba(90,169,255,.14); }
+
+#disk-sort-controls { display:flex;align-items:center;gap:6px;border-bottom:0.5px solid var(--border);padding:0 0 8px;overflow-x:auto; }
+#disk-sort-controls button { flex:none;white-space:nowrap;font-size:12px;padding:5px 8px; }
+#disk-sort-controls button[aria-pressed="true"] { color:#5aa9ff; }
+.disk-sort-arrow { display:inline-block;min-width:12px;margin-left:4px; }
+#disk-breadcrumbs[hidden] { display:none; }
+.disk-directory-card #disk-directory-summary { margin-top:0; }
+
+/* Keep analysis within the viewport while allowing the results to scroll. */
+body:has(#storage:not([hidden]) #disk-analysis:not([hidden])) { height:100vh;overflow:hidden; }
+body:has(#storage:not([hidden]) #disk-analysis:not([hidden])) main { height:100vh;display:flex;flex-direction:column;overflow:hidden; }
+body:has(#storage:not([hidden]) #disk-analysis:not([hidden])) header { flex:none; }
+#storage:has(#disk-analysis:not([hidden])), #disk-analysis, #disk-directory-view, #disk-largest-view { flex:1;min-height:0;min-width:0;display:flex;flex-direction:column; }
+.disk-workspace-content > .disk-toolbar { flex:none;flex-wrap:wrap; }
+.disk-inline-stats { display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;min-width:0;margin-left:auto;text-align:right; }
+.disk-inline-stats #disk-scanned-size { font-size:12px;white-space:nowrap; }
+.disk-inline-stats #disk-scanned-count { font-size:12px;margin:0; }
+.disk-toolbar #disk-volume-name { flex:0 1 auto; }
+#disk-directory-view > .disk-largest-entry, .disk-index-filters { flex:none; }
+#disk-directory-view .disk-analysis-layout { flex:1;min-height:0;display:flex;align-items:stretch; }
+#disk-directory-view .disk-directory-card, #disk-largest-view .disk-largest-card { flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;overflow:hidden; }
+#disk-entries, #disk-largest { flex:1;min-height:0;max-height:none;overflow:auto;scrollbar-width:none; }
+#disk-entries::-webkit-scrollbar, #disk-largest::-webkit-scrollbar { display:none; }
+#disk-breadcrumbs, #disk-sort-controls, #disk-directory-summary, #disk-page-controls { flex:none; }
+.disk-index-status { display:flex;align-items:baseline;gap:7px;min-width:0;flex:none;margin-top:8px; }
+.disk-index-status #disk-current-path { flex:0 1 25%;margin:0; }
+.disk-index-status #disk-state { flex:none;font-size:12px; }
+.disk-index-status #disk-scan-note { flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;margin:0; }
+.disk-method { flex:none;position:relative;margin:5px 0 0;font-size:12px; }
+.disk-method summary { cursor:pointer;width:max-content; }
+.disk-method p { position:absolute;bottom:18px;left:0;right:0;max-height:150px;overflow:auto;padding:10px;border:0.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);z-index:6; }
+@media(max-width:780px) { .disk-inline-stats { gap:2px;flex-direction:column; } .disk-toolbar { gap:6px; } }
+@media(max-height:560px) {
+  .disk-workspace-content > .disk-toolbar { margin-bottom:6px; }
+  #disk-largest-open { padding:3px 8px;height:28px; }
+  #disk-largest-open > .glyph { width:16px;height:16px; }
+  #disk-largest-open .disk-largest-entry-text { flex-direction:row;align-items:center;gap:5px; }
+  #disk-largest-open .disk-largest-entry-text strong { font-size:12px; }
+  #disk-largest-open .disk-largest-entry-text .muted { font-size:12px; }
+  .disk-index-filters { gap:4px;margin:5px 0; }
+  .disk-index-filters input { padding:4px 8px; }
+  #disk-kind-filters { padding-bottom:2px; }
+  #disk-kind-filters button { padding:3px 7px; }
+  #disk-directory-view .disk-directory-card { padding:8px 10px; }
+  #disk-directory-summary { margin-bottom:4px; }
+  #disk-sort-controls { padding-bottom:4px; }
+  #disk-sort-controls button { padding:3px 6px; }
+  #disk-page-controls { padding-top:4px; }
+  .disk-index-status { margin-top:4px; }
+}
+
+.volume-index-actions {display:flex;justify-content:flex-end;margin-top:4px}
+.volume-index-actions .button {font-size:12px;padding:5px 9px}
+[data-index-state="failed"] .volume-index-path {white-space:normal;overflow-wrap:anywhere;color:#ffb340}
+
+/* A usable index stays visually settled during background synchronization. */
+[data-index-ready="true"] .volume-index-label {color:#32d74b;display:flex;align-items:center;gap:7px}
+[data-index-ready="true"] .volume-index-label::before {content:"";width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+[data-index-ready="false"][data-index-state="indexing"] .volume-index-label,
+[data-index-ready="false"][data-index-state="preparing"] .volume-index-label {color:#5aa9ff}
+[data-index-state="failed"] .volume-index-label,
+[data-index-state="blocked"] .volume-index-label {color:#ffb340}
+.volume-index-note {font-size:12px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+[data-index-ready="true"] .volume-index-path {font-size:12px;white-space:normal;overflow-wrap:anywhere}

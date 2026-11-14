@@ -1,0 +1,23 @@
+.build/
+dist/
+.DS_Store
+*.xcuserstate
+.playwright-cli/
+.playwright-mcp/
+output/
+.diagnostics/
+
+# Local backup archives
+/backups/
+
+# Python-generated cache files
+__pycache__/
+*.py[cod]
+
+# Local logs and macOS build products
+*.log
+*.dSYM/
+**/xcuserdata/
+
+# Local diagnostic reports and test artifacts
+/reports/
