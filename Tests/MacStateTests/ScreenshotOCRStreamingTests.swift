@@ -362,6 +362,7 @@ private final class OCRStreamAPI:URLProtocol {
             let bitmap=try #require(view.bitmapImageRepForCachingDisplay(in:view.bounds))
             view.cacheDisplay(in:view.bounds,to:bitmap)
             let folder=URL(fileURLWithPath:"reports/ocr-adaptive-anchors-2026-10-29")
+            try FileManager.default.createDirectory(at:folder,withIntermediateDirectories:true)
             try #require(bitmap.representation(using:.png,properties:[:])).write(to:folder.appendingPathComponent(name))
         }
         try save("scroll-top.png")
