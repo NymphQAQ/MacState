@@ -25,7 +25,7 @@ private final class OCRRenderingProof: NSView {
 }
 
 @Suite(.serialized) @MainActor struct ScreenshotOCRRenderingTests {
-    private static let fixturePath = "reports/ocr-typography-2026-10-28"
+    nonisolated private static let fixturePath = "reports/ocr-typography-2026-10-28"
     private let folder = URL(fileURLWithPath: "reports/ocr-rendering-2026-10-28")
 
     private func bitmap(width: Int, height: Int) throws -> NSBitmapImageRep {

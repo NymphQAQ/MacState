@@ -12,7 +12,7 @@ final class OCRDocumentProof:NSView {
 }
 
 @Suite(.serialized) @MainActor struct ScreenshotOCRDocumentFlowTests {
-    private static let fixturePath = "reports/ocr-document-layout-2026-10-29"
+    nonisolated private static let fixturePath = "reports/ocr-document-layout-2026-10-29"
     private let output=URL(fileURLWithPath:"reports/ocr-adaptive-anchors-2026-10-29")
 
     @Test func sameStyleUsesStableFontDuringStreaming() throws {

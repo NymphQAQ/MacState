@@ -3,7 +3,7 @@ import Testing
 @testable import MacState
 
 @Suite(.serialized) @MainActor struct ScreenshotOCRDenseDialogueTests {
-    private static let fixturePath = "reports/ocr-dense-dialogue-2026-10-29"
+    nonisolated private static let fixturePath = "reports/ocr-dense-dialogue-2026-10-29"
 
     @Test func shortRowsEndParagraphsAndSoftWrapsKeepLanguageSpacing() {
         for (rows,expected) in [
